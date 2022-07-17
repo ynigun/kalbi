@@ -8,6 +8,8 @@ var Log = logrus.New()
 
 func init() {
 	Log.Out = os.Stdout
+	logrus.SetLevel(logrus.PanicLevel)
+
 }
 
 func SetLevel(Level logrus.Level) {
