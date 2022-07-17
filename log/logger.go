@@ -9,3 +9,6 @@ var Log = logrus.New()
 func init() {
 	Log.Out = os.Stdout
 }
+func SetLevel(logger.Level Level) {
+	log.SetLevel(log.WarnLevel)
+}
