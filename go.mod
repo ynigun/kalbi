@@ -1,4 +1,4 @@
-module github.com/KalbiProject/Kalbi
+module github.com/ynigun/Kalbi
 
 go 1.13
 
