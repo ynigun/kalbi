@@ -13,5 +13,5 @@ func init() {
 }
 
 func SetLevel(Level logrus.Level) {
-		Log.Level = logrus.PanicLevel
+		Log.Level = Level
 }
