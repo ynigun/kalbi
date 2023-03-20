@@ -16,7 +16,25 @@ const (
 	title  = "Kalbi Simple SIP CLient"
 	prompt = "kalbiclient> "
 )
+func (c *Client) SendOPTIONS() {
 
+	requestLine := message.NewRequestLine(method.OPTIONS, "sip", "123", "151.236.222.58", "5060") //Create requestline e.g.  REGISTER sip:1234@127.0.0.1:5060 SIP/2.0
+	requestVia := message.NewViaHeader("udp", "172.104.229.218", "5060")                          //Creates Via e.g. Via: SIP/2.0/UDP 127.0.0.1:5060
+	requestVia.SetBranch("z9hG4bKSG.23222057-ae36-483a-94da-ec070819f724")                        //Generate Branch
+	requestFrom := message.NewFromHeader("123", "sip", "172.104.229.218", "5060")                 //Creates From e.g. From: <sip:1234@127.0.0.1>
+	requestFrom.SetTag("3234jhf23")
+	requestTo := message.NewToHeader("123", "sip", "151.236.222.58", "5060")    //Creates To e.g. To: <sip:5678@127.0.0.1>
+	requestContact := message.NewContactHeader("sip", "123", "172.104.229.218") //Creates contact header
+	requestCallID := message.NewCallID(message.GenerateNewCallID())             //Creates CallID e.g. Call-ID: 123456789
+	requestCseq := message.NewCSeq("1", method.OPTIONS)                         //Creates CSeq e.g. CSeq: 1 INVITE
+	requestMaxFor := message.NewMaxForwards("70")                               //Creates Max-Forwards e.g. Max-Forwards: 70
+	requestContentLen := message.NewContentLength("0")                          //Creates Content Length Header
+	request := message.NewRequest(requestLine, requestVia, requestTo, requestFrom, requestContact, requestCallID, requestCseq, requestMaxFor, requestContentLen)
+
+	txmng := c.stack.GetTransactionManager()
+	tx := txmng.NewClientTransaction(request)
+	tx.Send(request, "151.236.222.58", "5060")
+}
 // ClientProperties, struct which holds required information
 type ClientProperties struct {
 	IP        string
@@ -172,7 +190,7 @@ func (c *Client) SendRegister() {
 // example Client struct method to send invitation
 func (c *Client) SendInvite(to string) {
 
-	requestLine := message.NewRequestLine(method.INVITE, "sip", to, c.properties.Domain, "5060")    //Create requestline e.g.  REGISTER sip:1234@127.0.0.1:5060 SIP/2.0
+	requestLine := message.NewRequestLine(method.OPTIONS, "sip", to, c.properties.Domain, "5060")    //Create requestline e.g.  REGISTER sip:1234@127.0.0.1:5060 SIP/2.0
 	requestVia := message.NewViaHeader("udp", c.properties.IP, "5060")                              //Creates Via e.g. Via: SIP/2.0/UDP 127.0.0.1:5060
 	requestVia.SetBranch(message.GenerateBranchId())                                                //Generate Branch
 	requestFrom := message.NewFromHeader(c.properties.Username, "sip", c.properties.Domain, "5060") //Creates From e.g. From: <sip:1234@127.0.0.1>
@@ -278,5 +296,6 @@ func main() {
 	client.properties = props
 	client.Start(props.IP, 5060)
 	client.SendRegister()
-	client.basicCliInterface()
+	client.SendInvite("to") 
+client.basicCliInterface()
 }
